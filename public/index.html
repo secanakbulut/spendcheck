@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>spendcheck</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>spendcheck</h1>
+    <p class="sub">small expense tracker.</p>
+  </header>
+
+  <main>
+    <section class="card add">
+      <h2>add an expense</h2>
+      <form id="add-form">
+        <label>
+          amount
+          <input type="number" name="amount" step="0.01" min="0.01" required />
+        </label>
+        <label>
+          category
+          <input type="text" name="category" required placeholder="groceries" />
+        </label>
+        <label>
+          date
+          <input type="date" name="date" required />
+        </label>
+        <label class="note">
+          note
+          <input type="text" name="note" maxlength="200" placeholder="optional" />
+        </label>
+        <button type="submit">save</button>
+      </form>
+      <p id="form-msg" class="msg"></p>
+    </section>
+
+    <section class="card">
+      <h2>expenses</h2>
+      <table id="expense-table">
+        <thead>
+          <tr><th>date</th><th>category</th><th>amount</th><th>note</th><th></th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

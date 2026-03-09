@@ -1,0 +1,107 @@
+:root {
+  --bg: #f6f5f1;
+  --card: #ffffff;
+  --ink: #1c1c1c;
+  --muted: #6a6a6a;
+  --line: #e5e3dc;
+  --accent: #2f6b5e;
+  --warn: #b94a3a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  margin: 0;
+  padding: 0;
+  line-height: 1.45;
+}
+
+header {
+  padding: 32px 24px 8px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+header h1 { margin: 0; font-weight: 600; letter-spacing: -0.5px; }
+.sub { color: var(--muted); margin: 4px 0 0; }
+
+main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px 24px 48px;
+  display: grid;
+  gap: 20px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+
+.card h2 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.add form {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.add label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.82rem;
+  color: var(--muted);
+  gap: 4px;
+}
+
+.add input {
+  font: inherit;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+}
+
+.add button {
+  padding: 9px 16px;
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.add button:hover { filter: brightness(1.05); }
+
+.msg { margin: 8px 0 0; min-height: 1.2em; font-size: 0.85rem; color: var(--muted); }
+.msg.err { color: var(--warn); }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); }
+th { font-weight: 600; color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.4px; }
+
+.row-del {
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.row-del:hover { color: var(--warn); }
+
+@media (max-width: 720px) {
+  .add form { grid-template-columns: 1fr 1fr; }
+  .add button { grid-column: span 2; }
+}
