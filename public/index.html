@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>spendcheck</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
   <header>
@@ -22,7 +23,15 @@
         </label>
         <label>
           category
-          <input type="text" name="category" required placeholder="groceries" />
+          <input type="text" name="category" list="cat-list" required placeholder="groceries" />
+          <datalist id="cat-list">
+            <option value="groceries"></option>
+            <option value="rent"></option>
+            <option value="transport"></option>
+            <option value="eating out"></option>
+            <option value="subscriptions"></option>
+            <option value="other"></option>
+          </datalist>
         </label>
         <label>
           date
@@ -35,6 +44,16 @@
         <button type="submit">save</button>
       </form>
       <p id="form-msg" class="msg"></p>
+    </section>
+
+    <section class="card">
+      <h2>daily spending (with 7-day moving average)</h2>
+      <canvas id="daily-chart" height="120"></canvas>
+    </section>
+
+    <section class="card">
+      <h2>monthly totals</h2>
+      <canvas id="month-chart" height="120"></canvas>
     </section>
 
     <section class="card">
