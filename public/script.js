@@ -1,3 +1,6 @@
+// spendcheck frontend
+// nothing too clever, just enough to be useful
+
 const fmt = new Intl.NumberFormat(undefined, { style: "currency", currency: "USD" });
 const form = document.getElementById("add-form");
 const msg = document.getElementById("form-msg");
@@ -5,6 +8,7 @@ const tableBody = document.querySelector("#expense-table tbody");
 
 let dailyChart, monthChart;
 
+// default the date input to today
 document.querySelector('input[name="date"]').valueAsDate = new Date();
 
 form.addEventListener("submit", async (e) => {
@@ -44,7 +48,11 @@ async function deleteRow(id) {
   await refresh();
 }
 
-function monthKey(dateStr) { return dateStr.slice(0, 7); }
+// ---- math ----
+
+function monthKey(dateStr) {
+  return dateStr.slice(0, 7); // YYYY-MM
+}
 
 function groupByMonth(rows) {
   const m = new Map();
@@ -63,7 +71,7 @@ function groupByDay(rows) {
   return [...m.entries()].sort(([a], [b]) => (a < b ? -1 : 1));
 }
 
-// fill missing days so the chart doesn't lie
+// fill in missing days between min and max so the chart is honest
 function fillDays(daySeries) {
   if (daySeries.length === 0) return [];
   const out = [];
@@ -88,19 +96,71 @@ function movingAverage(values, window) {
   return out;
 }
 
+// least-squares linear regression
+// slope = (n*Sxy - Sx*Sy) / (n*Sxx - Sx*Sx)
+// intercept = (Sy - slope*Sx) / n
+function linearRegression(ys) {
+  const n = ys.length;
+  if (n < 2) return null;
+  let sx = 0, sy = 0, sxy = 0, sxx = 0;
+  for (let i = 0; i < n; i++) {
+    const x = i;
+    const y = ys[i];
+    sx += x; sy += y; sxy += x * y; sxx += x * x;
+  }
+  const denom = n * sxx - sx * sx;
+  if (denom === 0) return null;
+  const slope = (n * sxy - sx * sy) / denom;
+  const intercept = (sy - slope * sx) / n;
+  return { slope, intercept };
+}
+
+function stdDev(values) {
+  if (values.length < 2) return 0;
+  const mean = values.reduce((s, v) => s + v, 0) / values.length;
+  const variance = values.reduce((s, v) => s + (v - mean) ** 2, 0) / values.length;
+  return Math.sqrt(variance);
+}
+
+function flagOutliers(rows) {
+  // group amounts by category, flag if > mean + 2*sd
+  const byCat = new Map();
+  for (const r of rows) {
+    if (!byCat.has(r.category)) byCat.set(r.category, []);
+    byCat.get(r.category).push(r.amount);
+  }
+  const stats = new Map();
+  for (const [cat, arr] of byCat) {
+    if (arr.length < 3) { stats.set(cat, null); continue; }
+    const mean = arr.reduce((s, v) => s + v, 0) / arr.length;
+    const sd = stdDev(arr);
+    stats.set(cat, { mean, sd });
+  }
+  return rows.map(r => {
+    const s = stats.get(r.category);
+    const flagged = s && r.amount > s.mean + 2 * s.sd;
+    return { ...r, flagged: !!flagged };
+  });
+}
+
+// ---- render ----
+
 function render(rows) {
-  renderTable(rows);
+  const flagged = flagOutliers(rows);
+  renderTable(flagged);
+  renderStats(rows);
   renderCharts(rows);
 }
 
 function renderTable(rows) {
   tableBody.innerHTML = "";
   if (rows.length === 0) {
-    tableBody.innerHTML = '<tr><td colspan="5">no expenses yet.</td></tr>';
+    tableBody.innerHTML = '<tr><td colspan="5" class="hint">no expenses yet.</td></tr>';
     return;
   }
   for (const r of rows) {
     const tr = document.createElement("tr");
+    if (r.flagged) tr.classList.add("flag");
     tr.innerHTML = `
       <td>${r.date}</td>
       <td>${escapeHtml(r.category)}</td>
@@ -113,6 +173,30 @@ function renderTable(rows) {
   tableBody.querySelectorAll(".row-del").forEach(b => {
     b.addEventListener("click", () => deleteRow(b.dataset.id));
   });
+}
+
+function renderStats(rows) {
+  const months = groupByMonth(rows);
+  const totals = months.map(([, v]) => v);
+  const thisMonthKey = new Date().toISOString().slice(0, 7);
+  const thisMonth = months.find(([k]) => k === thisMonthKey);
+  document.getElementById("stat-month").textContent = thisMonth ? fmt.format(thisMonth[1]) : fmt.format(0);
+
+  const sd = stdDev(totals);
+  document.getElementById("stat-std").textContent = totals.length >= 2 ? fmt.format(sd) : "--";
+
+  const reg = linearRegression(totals);
+  const forecastEl = document.getElementById("stat-forecast");
+  const hintEl = document.getElementById("stat-forecast-hint");
+  if (reg && totals.length >= 2) {
+    const next = reg.slope * totals.length + reg.intercept;
+    forecastEl.textContent = fmt.format(Math.max(0, next));
+    const dir = reg.slope > 0 ? "trending up" : reg.slope < 0 ? "trending down" : "flat";
+    hintEl.textContent = `${dir}, slope ${reg.slope.toFixed(2)}/mo`;
+  } else {
+    forecastEl.textContent = "--";
+    hintEl.textContent = "need at least 2 months";
+  }
 }
 
 function renderCharts(rows) {

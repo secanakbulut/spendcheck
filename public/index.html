@@ -10,7 +10,7 @@
 <body>
   <header>
     <h1>spendcheck</h1>
-    <p class="sub">small expense tracker.</p>
+    <p class="sub">small expense tracker, with a bit of math.</p>
   </header>
 
   <main>
@@ -46,6 +46,22 @@
       <p id="form-msg" class="msg"></p>
     </section>
 
+    <section class="stats">
+      <div class="tile">
+        <span class="label">this month</span>
+        <span class="val" id="stat-month">--</span>
+      </div>
+      <div class="tile">
+        <span class="label">monthly std dev</span>
+        <span class="val" id="stat-std">--</span>
+      </div>
+      <div class="tile forecast">
+        <span class="label">next month forecast</span>
+        <span class="val" id="stat-forecast">--</span>
+        <span class="hint" id="stat-forecast-hint"></span>
+      </div>
+    </section>
+
     <section class="card">
       <h2>daily spending (with 7-day moving average)</h2>
       <canvas id="daily-chart" height="120"></canvas>
@@ -58,6 +74,7 @@
 
     <section class="card">
       <h2>expenses</h2>
+      <p class="hint">flagged rows are more than 2 standard deviations above their category mean.</p>
       <table id="expense-table">
         <thead>
           <tr><th>date</th><th>category</th><th>amount</th><th>note</th><th></th></tr>
@@ -66,6 +83,10 @@
       </table>
     </section>
   </main>
+
+  <footer>
+    <p>local-only. data lives in <code>data/expenses.json</code>.</p>
+  </footer>
 
   <script src="script.js"></script>
 </body>

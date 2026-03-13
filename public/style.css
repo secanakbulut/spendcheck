@@ -25,7 +25,12 @@ header {
   margin: 0 auto;
 }
 
-header h1 { margin: 0; font-weight: 600; letter-spacing: -0.5px; }
+header h1 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
 .sub { color: var(--muted); margin: 4px 0 0; }
 
 main {
@@ -47,6 +52,7 @@ main {
   margin: 0 0 12px;
   font-size: 1rem;
   font-weight: 600;
+  color: var(--ink);
 }
 
 .add form {
@@ -73,6 +79,8 @@ main {
   color: var(--ink);
 }
 
+.add .note { grid-column: span 1; }
+
 .add button {
   padding: 9px 16px;
   background: var(--accent);
@@ -88,9 +96,31 @@ main {
 .msg { margin: 8px 0 0; min-height: 1.2em; font-size: 0.85rem; color: var(--muted); }
 .msg.err { color: var(--warn); }
 
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.tile {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tile .label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.tile .val { font-size: 1.6rem; font-weight: 600; margin-top: 4px; }
+.tile .hint { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+.tile.forecast { background: #eef3f0; border-color: #cfdcd6; }
+
 table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
 th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); }
 th { font-weight: 600; color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.4px; }
+tr.flag td { background: #fdf3f1; }
+tr.flag td:first-child::before { content: "!"; color: var(--warn); font-weight: 700; margin-right: 6px; }
 
 .row-del {
   background: transparent;
@@ -101,7 +131,18 @@ th { font-weight: 600; color: var(--muted); font-size: 0.78rem; text-transform: 
 }
 .row-del:hover { color: var(--warn); }
 
+.hint { color: var(--muted); font-size: 0.82rem; margin: 0 0 10px; }
+
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.8rem;
+  padding: 16px 24px 32px;
+}
+footer code { background: #ece9e0; padding: 1px 5px; border-radius: 3px; }
+
 @media (max-width: 720px) {
   .add form { grid-template-columns: 1fr 1fr; }
   .add button { grid-column: span 2; }
+  .stats { grid-template-columns: 1fr; }
 }
