@@ -146,3 +146,8 @@ footer code { background: #ece9e0; padding: 1px 5px; border-radius: 3px; }
   .add button { grid-column: span 2; }
   .stats { grid-template-columns: 1fr; }
 }
+
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
