@@ -1,5 +1,7 @@
 # spendcheck
 
+![](docs/screenshot.png)
+
 a small expense tracker i wrote on a slow weekend. add expenses, see them on a couple of charts, and get a rough forecast of next month based on the past months. nothing fancy, no accounts, no cloud, the whole thing is one node process and a json file on disk.
 
 i kept wanting to know "if i keep going at this rate, where am i landing next month" and a spreadsheet felt heavier than i wanted, so this is the smaller version of that.
